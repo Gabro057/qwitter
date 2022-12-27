@@ -1,37 +1,33 @@
 <template>
-  <q-item
-    clickable
-    :to=anchor
-    v-ripple
-  >
+  <q-item clickable :to="anchor" v-ripple exact>
     <q-item-section avatar>
-      <q-icon :name=icon size="md" />
+      <q-icon :name="icon" size="md" />
     </q-item-section>
     <q-item-section class="text-h6 text-weight-bold">
-      {{text}}
+      {{ text }}
     </q-item-section>
   </q-item>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'NavItem',
+  name: "NavItem",
   props: {
     text: {
       type: String,
       required: true,
-      default: ''
+      default: "",
     },
     icon: {
       type: String,
-      default: ''
+      default: "",
     },
     anchor: {
       type: String,
-      default: '/'
-    }
-  }
-})
+      default: "/",
+    },
+  },
+});
 </script>
