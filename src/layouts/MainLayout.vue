@@ -12,7 +12,14 @@
         />
 
         <q-toolbar-title class="text-weight-bold">
-          Qwitter
+          <span class="gt-sm">Qwitter</span>
+          <q-icon
+            class="q-pa-md lt-md header-icon"
+            color="primary"
+            name="fas fa-dove"
+            size="sm"
+          />
+
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -127,3 +134,11 @@
   const toggleLeftDrawer = () => leftDrawerOpen.value = !leftDrawerOpen.value
 
 </script>
+
+<style lang="sass">
+.header-icon
+  position: absolute
+  bottom: 0
+  left: 50%
+  transform: translateX(-50%)
+</style>
