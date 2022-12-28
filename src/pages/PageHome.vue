@@ -68,7 +68,14 @@
             <q-btn color="grey" icon="far fa-comment" size="sm" flat round />
             <q-btn color="grey" icon="fas fa-retweet" size="sm" flat round />
             <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
-            <q-btn color="grey" icon="fas fa-trash" size="sm" flat round />
+            <q-btn
+              color="grey"
+              icon="fas fa-trash"
+              size="sm"
+              flat
+              round
+              @click="deleteQweet(qweet)"
+            />
           </div>
         </q-item-section>
 
@@ -105,6 +112,8 @@ const addNewQweet = () => {
   qweets.value.unshift(newQweet);
   newQweetContent.value = "";
 };
+const deleteQweet = (qweet) =>
+  (qweets.value = qweets.value.filter((q) => q.date != qweet.date));
 </script>
 
 <style lang="sass">
