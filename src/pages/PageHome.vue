@@ -37,6 +37,7 @@
           rounded
           unelevated
           :disable="!newQweetContent"
+          @click="addNewQweet"
         />
       </div>
     </div>
@@ -95,6 +96,15 @@ const qweets = ref([
   },
 ]);
 const relativeDate = (value) => formatDistance(value, new Date());
+const addNewQweet = () => {
+  let newQweet = {
+    content: newQweetContent.value,
+    date: Date.now(),
+  };
+  console.log("newQweet", newQweet);
+  qweets.value.unshift(newQweet);
+  newQweetContent.value = "";
+};
 </script>
 
 <style lang="sass">
