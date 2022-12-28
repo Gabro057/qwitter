@@ -42,6 +42,39 @@
     </div>
 
     <q-separator class="divider" size=".8rem" color="grey-2" />
+
+    <q-list>
+      <q-item class="q-py-md">
+        <q-item-section avatar top>
+          <q-avatar size="xl">
+            <img
+              src="https://gravatar.com/avatar/2ed6381339dc2f0cd3afd0658f0269e3?s=80"
+            />
+          </q-avatar>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label class="text-subtitle1">
+            <strong>Gabro</strong>
+            <span class="q-ml-sm text-grey-7">@gabro_057</span>
+          </q-item-label>
+          <q-item-label class="qweet-content text-body1">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, itaque adipisci.
+            <br /><br />
+            Eum possimus ad fugiat. Voluptatum odio eligendi excepturi, nesciunt ea animi
+            totam autem dolorum laborum!
+          </q-item-label>
+          <div class="qweet-icons row justify-between q-mt-sm">
+            <q-btn color="grey" icon="far fa-comment" size="sm" flat round />
+            <q-btn color="grey" icon="fas fa-retweet" size="sm" flat round />
+            <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
+            <q-btn color="grey" icon="fas fa-trash" size="sm" flat round />
+          </div>
+        </q-item-section>
+
+        <q-item-section side top> 1 min ago </q-item-section>
+      </q-item>
+    </q-list>
   </q-page>
 </template>
 
@@ -55,6 +88,12 @@ const newQweetContent = ref("");
 .new-qweet textarea
   font-size: 120%
   line-height: 1.4 !important
+
+.qweet-content
+  white-space: pre-line
+
+.qweet-icons
+  margin-left: -5px
 
 .divider
   border-top: 1px solid
