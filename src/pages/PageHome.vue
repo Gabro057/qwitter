@@ -43,8 +43,8 @@
 
     <q-separator class="divider" size=".8rem" color="grey-2" />
 
-    <q-list>
-      <q-item class="q-py-md">
+    <q-list separator>
+      <q-item v-for="qweet in qweets" :key="qweet.date" class="q-py-md">
         <q-item-section avatar top>
           <q-avatar size="xl">
             <img
@@ -58,12 +58,11 @@
             <strong>Gabro</strong>
             <span class="q-ml-sm text-grey-7">@gabro_057</span>
           </q-item-label>
+
           <q-item-label class="qweet-content text-body1">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex, itaque adipisci.
-            <br /><br />
-            Eum possimus ad fugiat. Voluptatum odio eligendi excepturi, nesciunt ea animi
-            totam autem dolorum laborum!
+            {{ qweet.content }}
           </q-item-label>
+
           <div class="qweet-icons row justify-between q-mt-sm">
             <q-btn color="grey" icon="far fa-comment" size="sm" flat round />
             <q-btn color="grey" icon="fas fa-retweet" size="sm" flat round />
@@ -72,7 +71,7 @@
           </div>
         </q-item-section>
 
-        <q-item-section side top> 1 min ago </q-item-section>
+        <q-item-section side top> {{ relativeDate(qweet.date) }} </q-item-section>
       </q-item>
     </q-list>
   </q-page>
@@ -80,8 +79,22 @@
 
 <script setup>
 import { ref } from "vue";
+import { formatDistance } from "date-fns";
 
 const newQweetContent = ref("");
+const qweets = ref([
+  {
+    content:
+      "ABC Eum possimus ad fugiat. Voluptatum odio eligendi excepturi, nesciunt ea animi totam autem dolorum laborum!",
+    date: 1672260811975,
+  },
+  {
+    content:
+      "DEF Eum possimus ad fugiat. Voluptatum odio eligendi excepturi, nesciunt ea animi totam autem dolorum laborum!",
+    date: 1672250812975,
+  },
+]);
+const relativeDate = (value) => formatDistance(value, new Date());
 </script>
 
 <style lang="sass">
