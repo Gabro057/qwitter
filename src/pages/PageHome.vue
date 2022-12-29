@@ -45,42 +45,48 @@
     <q-separator class="divider" size=".8rem" color="grey-2" />
 
     <q-list separator>
-      <q-item v-for="qweet in qweets" :key="qweet.date" class="q-py-md">
-        <q-item-section avatar top>
-          <q-avatar size="xl">
-            <img
-              src="https://gravatar.com/avatar/2ed6381339dc2f0cd3afd0658f0269e3?s=80"
-            />
-          </q-avatar>
-        </q-item-section>
+      <transition-group
+        appear
+        enter-active-class="animated fadeIn slow"
+        leave-active-class="animated fadeOut slow"
+      >
+        <q-item v-for="qweet in qweets" :key="qweet.date" class="qweet q-py-md">
+          <q-item-section avatar top>
+            <q-avatar size="xl">
+              <img
+                src="https://gravatar.com/avatar/2ed6381339dc2f0cd3afd0658f0269e3?s=80"
+              />
+            </q-avatar>
+          </q-item-section>
 
-        <q-item-section>
-          <q-item-label class="text-subtitle1">
-            <strong>Gabro</strong>
-            <span class="q-ml-sm text-grey-7">@gabro_057</span>
-          </q-item-label>
+          <q-item-section>
+            <q-item-label class="text-subtitle1">
+              <strong>Gabro</strong>
+              <span class="q-ml-sm text-grey-7">@gabro_057</span>
+            </q-item-label>
 
-          <q-item-label class="qweet-content text-body1">
-            {{ qweet.content }}
-          </q-item-label>
+            <q-item-label class="qweet-content text-body1">
+              {{ qweet.content }}
+            </q-item-label>
 
-          <div class="qweet-icons row justify-between q-mt-sm">
-            <q-btn color="grey" icon="far fa-comment" size="sm" flat round />
-            <q-btn color="grey" icon="fas fa-retweet" size="sm" flat round />
-            <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
-            <q-btn
-              color="grey"
-              icon="fas fa-trash"
-              size="sm"
-              flat
-              round
-              @click="deleteQweet(qweet)"
-            />
-          </div>
-        </q-item-section>
+            <div class="qweet-icons row justify-between q-mt-sm">
+              <q-btn color="grey" icon="far fa-comment" size="sm" flat round />
+              <q-btn color="grey" icon="fas fa-retweet" size="sm" flat round />
+              <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
+              <q-btn
+                color="grey"
+                icon="fas fa-trash"
+                size="sm"
+                flat
+                round
+                @click="deleteQweet(qweet)"
+              />
+            </div>
+          </q-item-section>
 
-        <q-item-section side top> {{ relativeDate(qweet.date) }} </q-item-section>
-      </q-item>
+          <q-item-section side top> {{ relativeDate(qweet.date) }} </q-item-section>
+        </q-item>
+      </transition-group>
     </q-list>
   </q-page>
 </template>
@@ -117,6 +123,9 @@ const deleteQweet = (qweet) =>
 </script>
 
 <style lang="sass">
+.qweet:not(:first-child)
+  border-top: 1px solid rgba(0,0,0,0.12)
+
 .new-qweet textarea
   font-size: 120%
   line-height: 1.4 !important
