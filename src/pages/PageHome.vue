@@ -97,9 +97,13 @@
 <script setup>
 import { ref } from "vue";
 import { formatDistance } from "date-fns";
+import db from "src/boot/firebase";
+import { query, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore/lite";
 
 const newQweetContent = ref("");
-const qweets = ref([
+const qweets = ref([]);
+const oldqweets = ref([
   {
     content:
       "ABC Eum possimus ad fugiat. Voluptatum odio eligendi excepturi, nesciunt ea animi totam autem dolorum laborum!",
@@ -111,6 +115,17 @@ const qweets = ref([
     date: 1672250812975,
   },
 ]);
+
+async function getQweets(db) {
+  const qweetsCol = collection(db, "qweets");
+  //const q = query(qweetsCol, orderBy("date"), limit(3));
+  const qweetsSnapshot = await getDocs(qweetsCol);
+  qweets.value = qweetsSnapshot.docs
+    .map((doc) => doc.data())
+    .sort((a, b) => b.date - a.date);
+}
+getQweets(db); //mounted
+
 const relativeDate = (value) => formatDistance(value, new Date());
 const addNewQweet = () => {
   let newQweet = {
