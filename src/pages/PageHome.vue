@@ -51,7 +51,7 @@
           enter-active-class="animated fadeIn slow"
           leave-active-class="animated fadeOut slow"
         >
-          <q-item v-for="qweet in qweets" :key="qweet.date" class="qweet q-py-md">
+          <q-item v-for="qweet in qweets" :key="qweet.id" class="qweet q-py-md">
             <q-item-section avatar top>
               <q-avatar size="xl">
                 <img
@@ -63,6 +63,7 @@
             <q-item-section>
               <q-item-label class="text-subtitle1">
                 <strong>Gabro</strong>
+                <strong>id: {{ qweet.id }}</strong>
                 <span class="q-ml-sm text-grey-7"
                   >@gabro_057 <br class="lt-md" />
                   &bull; {{ relativeDate(qweet.date) }}</span
@@ -83,7 +84,7 @@
                   size="sm"
                   flat
                   round
-                  @click="deleteQweet(qweet)"
+                  @click="deleteQweet(qweet.id)"
                 />
               </div>
             </q-item-section>
@@ -99,8 +100,9 @@ import { ref, onMounted } from "vue";
 import { formatDistance } from "date-fns";
 import db from "src/boot/firebase";
 //import { query, orderBy, limit } from "firebase/firestore";
-import { collection, getDocs, addDoc } from "firebase/firestore/lite";
+import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore/lite";
 //import { collection, addDoc, getDocs } from "firebase/firestore";
+//import { doc, deleteDoc } from "firebase/firestore";
 
 const newQweetContent = ref("");
 const qweets = ref([]);
@@ -119,15 +121,20 @@ const oldqweets = ref([
 
 async function getQweets(db) {
   const qweetsCol = collection(db, "qweets");
-  //const q = query(qweetsCol, orderBy("date"), limit(3));
   const qweetsSnapshot = await getDocs(qweetsCol);
-  qweets.value = qweetsSnapshot.docs
-    .map((doc) => doc.data())
-    .sort((a, b) => b.date - a.date);
+
+  qweets.value = [];
+  console.log("GET", qweets);
+  console.log("qweetsSnapshot.docs", qweetsSnapshot.docs);
+  qweetsSnapshot.docs.forEach((item) => {
+    let data = item.data();
+    data.id = item.id;
+    qweets.value.push(data);
+  });
+  qweets.value.sort((a, b) => b.date - a.date);
 }
 
 onMounted(() => getQweets(db));
-//getQweets(db); //mounted
 
 const relativeDate = (value) => formatDistance(value, new Date());
 const addNewQweet = async () => {
@@ -142,8 +149,12 @@ const addNewQweet = async () => {
   getQweets(db);
   newQweetContent.value = "";
 };
-const deleteQweet = (qweet) =>
-  (qweets.value = qweets.value.filter((q) => q.date != qweet.date));
+const deleteQweet = async (qweetID) => {
+  console.log("deleteQweet", qweetID);
+  //qweets.value = qweets.value.filter((q) => q.id != qweetID);
+  await deleteDoc(doc(db, "qweets", qweetID));
+  getQweets(db);
+};
 </script>
 
 <style lang="sass">
