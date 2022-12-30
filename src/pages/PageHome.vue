@@ -102,9 +102,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { formatDistance } from "date-fns";
 import db from "src/boot/firebase";
+/*
 import {
   collection,
   getDocs,
@@ -112,23 +113,29 @@ import {
   deleteDoc,
   updateDoc,
   doc,
-} from "firebase/firestore/lite";
+  onSnapshot,
+  query,
+} from "firebase/firestore/lite";*/
+//setDoc,
+import {
+  collection,
+  query,
+  doc,
+  onSnapshot,
+  setDoc,
+  addDoc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { onMounted } from "vue";
 
 const newQweetContent = ref("");
 const qweets = ref([]);
-const oldqweets = ref([
-  {
-    content:
-      "ABC Eum possimus ad fugiat. Voluptatum odio eligendi excepturi, nesciunt ea animi totam autem dolorum laborum!",
-    date: 1672260811975,
-  },
-  {
-    content:
-      "DEF Eum possimus ad fugiat. Voluptatum odio eligendi excepturi, nesciunt ea animi totam autem dolorum laborum!",
-    date: 1672250812975,
-  },
-]);
 
+/*
 async function getQweets(db) {
   const qweetsCol = collection(db, "qweets");
   const qweetsSnapshot = await getDocs(qweetsCol);
@@ -140,9 +147,45 @@ async function getQweets(db) {
     qweets.value.push(data);
   });
   qweets.value.sort((a, b) => b.date - a.date);
-}
+}*/
+/*
+onMounted(() => {
+  console.log("mounted");
+  getQweets(db);
+});*/
 
-onMounted(() => getQweets(db));
+onMounted(() => {
+  console.log("mounted");
+
+  const q = query(collection(db, "qweets"));
+  console.log("q", q);
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      console.log("change type", change.type);
+      if (change.type === "added") {
+        console.log("ADDED");
+        let data = change.doc.data();
+        data.id = change.doc.id;
+        qweets.value.push(data);
+      } else if (change.type === "modified") {
+        console.log("EDIT");
+        const index = qweets.value.findIndex((qweet) => qweet.id === change.doc.id);
+        qweets.value.splice(index, 1);
+        qweets.value.push({
+          id: change.doc.id,
+          content: change.doc.data().content,
+          liked: change.doc.data().liked,
+          date: change.doc.data().date,
+        });
+      } else if (change.type === "removed") {
+        console.log("removed");
+        qweets.value = qweets.value.filter((q) => q.id != change.doc.id);
+      }
+    });
+
+    qweets.value.sort((a, b) => b.date - a.date);
+  });
+});
 
 const relativeDate = (value) => formatDistance(value, new Date());
 const addNewQweet = async () => {
@@ -152,17 +195,16 @@ const addNewQweet = async () => {
     liked: false,
   };
   console.log("newQweet", newQweet);
-  //qweets.value.unshift(newQweet);
+
   const docRef = await addDoc(collection(db, "qweets"), newQweet);
   console.log("docRef", docRef);
-  getQweets(db);
   newQweetContent.value = "";
 };
 const deleteQweet = async (qweetID) => {
   console.log("deleteQweet", qweetID);
-  //qweets.value = qweets.value.filter((q) => q.id != qweetID);
+  qweets.value = qweets.value.filter((q) => q.id != qweetID);
   await deleteDoc(doc(db, "qweets", qweetID));
-  getQweets(db);
+  //getQweets(db);
 };
 const toggleLiked = async (qweet) => {
   qweet.liked = !qweet.liked;
