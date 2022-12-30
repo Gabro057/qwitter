@@ -63,7 +63,6 @@
             <q-item-section>
               <q-item-label class="text-subtitle1">
                 <strong>Gabro</strong>
-                <strong>id: {{ qweet.id }}</strong>
                 <span class="q-ml-sm text-grey-7"
                   >@gabro_057 <br class="lt-md" />
                   &bull; {{ relativeDate(qweet.date) }}</span
@@ -77,7 +76,14 @@
               <div class="qweet-icons row justify-between q-mt-sm">
                 <q-btn color="grey" icon="far fa-comment" size="sm" flat round />
                 <q-btn color="grey" icon="fas fa-retweet" size="sm" flat round />
-                <q-btn color="grey" icon="far fa-heart" size="sm" flat round />
+                <q-btn
+                  :color="qweet.liked ? 'pink' : 'grey'"
+                  :icon="qweet.liked ? 'fas fa-heart' : 'far fa-heart'"
+                  size="sm"
+                  flat
+                  round
+                  @click="toggleLiked(qweet)"
+                />
                 <q-btn
                   color="grey"
                   icon="fas fa-trash"
@@ -99,10 +105,14 @@
 import { ref, onMounted } from "vue";
 import { formatDistance } from "date-fns";
 import db from "src/boot/firebase";
-//import { query, orderBy, limit } from "firebase/firestore";
-import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore/lite";
-//import { collection, addDoc, getDocs } from "firebase/firestore";
-//import { doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore/lite";
 
 const newQweetContent = ref("");
 const qweets = ref([]);
@@ -124,8 +134,6 @@ async function getQweets(db) {
   const qweetsSnapshot = await getDocs(qweetsCol);
 
   qweets.value = [];
-  console.log("GET", qweets);
-  console.log("qweetsSnapshot.docs", qweetsSnapshot.docs);
   qweetsSnapshot.docs.forEach((item) => {
     let data = item.data();
     data.id = item.id;
@@ -141,6 +149,7 @@ const addNewQweet = async () => {
   let newQweet = {
     content: newQweetContent.value,
     date: Date.now(),
+    liked: false,
   };
   console.log("newQweet", newQweet);
   //qweets.value.unshift(newQweet);
@@ -154,6 +163,14 @@ const deleteQweet = async (qweetID) => {
   //qweets.value = qweets.value.filter((q) => q.id != qweetID);
   await deleteDoc(doc(db, "qweets", qweetID));
   getQweets(db);
+};
+const toggleLiked = async (qweet) => {
+  qweet.liked = !qweet.liked;
+  const actQweet = doc(db, "qweets", qweet.id);
+
+  await updateDoc(actQweet, {
+    liked: qweet.liked,
+  });
 };
 </script>
 
