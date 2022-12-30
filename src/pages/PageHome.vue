@@ -95,11 +95,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { formatDistance } from "date-fns";
 import db from "src/boot/firebase";
-import { query, orderBy, limit } from "firebase/firestore";
-import { collection, getDocs } from "firebase/firestore/lite";
+//import { query, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore/lite";
+//import { collection, addDoc, getDocs } from "firebase/firestore";
 
 const newQweetContent = ref("");
 const qweets = ref([]);
@@ -124,16 +125,21 @@ async function getQweets(db) {
     .map((doc) => doc.data())
     .sort((a, b) => b.date - a.date);
 }
-getQweets(db); //mounted
+
+onMounted(() => getQweets(db));
+//getQweets(db); //mounted
 
 const relativeDate = (value) => formatDistance(value, new Date());
-const addNewQweet = () => {
+const addNewQweet = async () => {
   let newQweet = {
     content: newQweetContent.value,
     date: Date.now(),
   };
   console.log("newQweet", newQweet);
-  qweets.value.unshift(newQweet);
+  //qweets.value.unshift(newQweet);
+  const docRef = await addDoc(collection(db, "qweets"), newQweet);
+  console.log("docRef", docRef);
+  getQweets(db);
   newQweetContent.value = "";
 };
 const deleteQweet = (qweet) =>
